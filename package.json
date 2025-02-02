@@ -1,0 +1,17 @@
+{
+  "name": "alxorazmiy",
+  "version": "1.0.0",
+  "description": "Alxorazmiy maktabi uchun ish jarayonini tizimlashtirish bo'yicha telegram bot",
+  "main": "index.js",
+  "author": "Shamshod Ne'matullayev",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon index"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.9.1",
+    "telegraf": "^4.16.3",
+    "telegraf-session-local": "^2.1.1"
+  }
+}
