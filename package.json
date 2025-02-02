@@ -6,7 +6,8 @@
   "author": "Shamshod Ne'matullayev",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index"
+    "dev": "nodemon index",
+    "start": "node index"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
