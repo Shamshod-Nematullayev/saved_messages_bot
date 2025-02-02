@@ -32,7 +32,7 @@ composer.hears(
       return ctx.reply("Bu kategoriyada bo'yicha xabarlar yo'q.");
     }
     for (const msg of messages) {
-      await ctx.telegram.forwardMessage(
+      await ctx.telegram.copyMessage(
         ctx.chat.id,
         process.env.CHANNEL_ID,
         msg.message_id

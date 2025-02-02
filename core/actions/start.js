@@ -6,7 +6,6 @@ composer.start(async (ctx) => {
   await ctx.telegram.setMyCommands([
     { command: "start", description: "Botni ishga tushurish" },
     { command: "help", description: "Yordam olish" },
-    { command: "info", description: "Bot haqida ma'lumot" },
   ]);
   ctx.reply(
     "Xabarlarni saqlash uchun shunchaki ularni botga ulashing",
