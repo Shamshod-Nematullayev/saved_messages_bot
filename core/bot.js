@@ -4,39 +4,53 @@ require("dotenv").config();
 const LocalSession = require("telegraf-session-local");
 const scenes = require("./scenes");
 const composer = require("./middleware");
+const express = require("express");
 
-// Bot yaratish
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
-// Middleware'larni qo'shish
+// Session, scene va middleware’lar
 bot.use(new LocalSession({ database: "./session.json" }).middleware());
 bot.use(scenes.middleware());
 bot.use(composer.middleware());
-
-// Barcha action'larni qo'shish
 bot.use(actions);
 
-// Xato boshqaruvi
+// Xatoliklarni tutish
 bot.catch((err, ctx) => {
   console.error(`Bot xatosi: ${ctx.updateType}`, err);
   ctx.reply("Xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.");
 });
 
-// Bot ishga tushirish
+// Webhook URL (Telegram shunga yuboradi)
+const WEBHOOK_PATH = `/bot${process.env.TELEGRAM_TOKEN}`;
+const WEBHOOK_URL = `${process.env.WEBHOOK_DOMAIN}${WEBHOOK_PATH}`;
+
+// Botni ishga tushirish
 const startBot = async () => {
-  try {
-    await bot.launch(() => {
-      console.log("Telegram serveriga muvaffaqiyatli ulandi");
+  if (process.env.NODE_ENV === "production") {
+    const app = express();
+    app.use(express.json());
+
+    // Expressga webhook endpoint qo'shamiz
+    app.use(bot.webhookCallback(WEBHOOK_PATH));
+
+    // Telegramga webhook URL ni ro'yxatdan o'tkazamiz
+    await bot.telegram.setWebhook(WEBHOOK_URL);
+
+    const port = process.env.PORT || 9000;
+    app.listen(port, () => {
+      console.log(`🚀 Production: Webhook server ${port}-portda ishlayapti`);
     });
-  } catch (error) {
-    console.error("Bot ishga tushirishda xatolik:", error);
+  } else {
+    // Development uchun polling
+    bot.launch();
+    console.log("🔧 Development: Bot polling orqali ishga tushdi");
   }
 };
 
-// Bot to'xtatish
+// Botni to'xtatish (CTRL+C)
 const stopBot = () => {
   bot.stop("SIGINT");
-  console.log("Bot to'xtatildi");
+  console.log("⛔ Bot to'xtatildi");
 };
 
 module.exports = { bot, startBot, stopBot };

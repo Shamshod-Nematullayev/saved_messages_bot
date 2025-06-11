@@ -6,11 +6,12 @@
   "author": "Shamshod Ne'matullayev",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index",
-    "start": "node index"
+    "dev": "nodemon index ",
+    "start": "node --no-deprecation index 2> errors.log"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
+    "express": "^5.1.0",
     "mongoose": "^8.9.1",
     "telegraf": "^4.16.3",
     "telegraf-session-local": "^2.1.1"
