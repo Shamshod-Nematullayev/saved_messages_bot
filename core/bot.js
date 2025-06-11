@@ -26,6 +26,8 @@ const WEBHOOK_URL = `${process.env.WEBHOOK_DOMAIN}${WEBHOOK_PATH}`;
 
 // Botni ishga tushirish
 const startBot = async () => {
+  const fs = require("fs");
+  const https = require("https");
   if (process.env.NODE_ENV === "production") {
     const app = express();
     app.use(express.json());
@@ -33,11 +35,20 @@ const startBot = async () => {
     // Expressga webhook endpoint qo'shamiz
     app.use(bot.webhookCallback(WEBHOOK_PATH));
 
-    // Telegramga webhook URL ni ro'yxatdan o'tkazamiz
-    await bot.telegram.setWebhook(WEBHOOK_URL);
+    const options = {
+      key: fs.readFileSync("./ssl/key.pem"),
+      cert: fs.readFileSync("./ssl/cert.pem"),
+    };
 
-    const port = process.env.PORT || 9000;
-    app.listen(port, () => {
+    // Telegramga webhook URL ni ro'yxatdan o'tkazamiz
+    await bot.telegram.setWebhook(WEBHOOK_URL, {
+      certificate: {
+        source: fs.readFileSync("./ssl/cert.pem"),
+      },
+    });
+
+    const port = process.env.PORT || 8443;
+    https.createServer(options, app).listen(port, () => {
       console.log(`🚀 Production: Webhook server ${port}-portda ishlayapti`);
     });
   } else {
